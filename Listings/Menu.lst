@@ -1,0 +1,264 @@
+C51 COMPILER V9.54   MENU                                                                  09/04/2025 18:00:50 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MENU
+OBJECT MODULE PLACED IN .\Objects\Menu.obj
+COMPILER INVOKED BY: E:\Learning Programs\kiel5\C51\BIN\C51.EXE Menu.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT
+                    -(.\Listings\Menu.lst) OBJECT(.\Objects\Menu.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "LCD1602.h"
+   3          #include "Delay.h"
+   4          #include "Key.h"
+   5          
+   6          extern const char* g_Messages[];
+   7          
+   8          extern  char Compare;
+   9          extern unsigned char Key_Num;
+  10          extern unsigned char auto_mode;
+  11          extern unsigned char Warning_TNum;
+  12          extern  unsigned int Warning_LHNum;
+  13          extern  unsigned int Warning_LLNum;
+  14          extern unsigned char Motor_Start;
+  15          
+  16          unsigned char cycle=0;
+  17          
+  18          void Show_Menu_Start_Init()
+  19          {
+  20   1              LCD_ShowString(1,1,"   ENV SYSTEM   ");
+  21   1              LCD_ShowString(2,1,"Function Loading");
+  22   1      }
+  23          
+  24          void Show_Menu_End_Init()
+  25          {
+  26   1              unsigned char i=0;
+  27   1              LCD_ShowString(2,1,"                ");
+  28   1              for(i=0;i<8;i++)
+  29   1              {
+  30   2                      LCD_ShowChar(2,1+i,0x29);
+  31   2                      LCD_ShowChar(2,16-i,0x28);
+  32   2                      Delay(150);
+  33   2              }
+  34   1      
+  35   1              Delay(200);
+  36   1              LCD_ShowString(1,1,"                ");
+  37   1              LCD_ShowString(1,1,"    WELCOME!    ");
+  38   1              Delay(3000);
+  39   1              LCD_ShowString(1,1,"                ");
+  40   1              LCD_ShowString(2,1,"                ");
+  41   1      }
+  42          
+  43          
+  44          void Show_Menu_Function()
+  45          {
+  46   1              static char i=0;
+  47   1              Key_Num=Key(); 
+  48   1              while(Key_Num!=4)
+  49   1              {
+  50   2                      if(Key_Num)
+  51   2                      {
+  52   3                              if(Key_Num==2)
+  53   3                              {               
+  54   4                                      i++;
+C51 COMPILER V9.54   MENU                                                                  09/04/2025 18:00:50 PAGE 2   
+
+  55   4                                      if(i>3)i=0;
+  56   4                                      
+  57   4                                      LCD_ShowString(1,1,g_Messages[i]);
+  58   4                                      LCD_ShowString(2,1,g_Messages[i+1]);
+  59   4      
+  60   4                              }               
+  61   3                              if(Key_Num==1)
+  62   3                              {                       
+  63   4                                      i--;
+  64   4                                      if(i<0)i=0;
+  65   4                                      
+  66   4                                      LCD_ShowString(1,1,g_Messages[i]);
+  67   4                                      LCD_ShowString(2,1,g_Messages[i+1]);
+  68   4      
+  69   4                              }
+  70   3                              if(Key_Num==3)
+  71   3                              {
+  72   4                      
+  73   4                                      if(i==0)
+  74   4                                      {
+  75   5                                              LCD_ShowString(1,1,"                ");
+  76   5                                              LCD_ShowString(2,1,"                ");
+  77   5                                              LCD_ShowString(1,1,"Now Warning Temp");
+  78   5                                              LCD_ShowString(2,1,"-");
+  79   5                                              LCD_ShowString(2,16,"+");
+  80   5                                              LCD_ShowNum(2,8,Warning_TNum,2);
+  81   5                                              cycle=1;
+  82   5                                              while(cycle)
+  83   5                                              {
+  84   6                                                      Key_Num=Key();
+  85   6                                                      if(Key_Num==1)
+  86   6                                                      {
+  87   7                                                              Warning_TNum--;
+  88   7                                                              LCD_ShowNum(2,8,Warning_TNum,2);
+  89   7                                                              if(Warning_TNum<10)Warning_TNum=10;
+  90   7                                                      }                                       
+  91   6                                                      if(Key_Num==2)
+  92   6                                                      {
+  93   7                                                              Warning_TNum++;
+  94   7                                                              LCD_ShowNum(2,8,Warning_TNum,2);
+  95   7                                                              if(Warning_TNum>30)Warning_TNum=30;
+  96   7                                                      }
+  97   6                                                      if(Key_Num==3)
+  98   6                                                      {
+  99   7                                                              cycle=0;
+ 100   7                                                              LCD_ShowString(1,1,"                 ");
+ 101   7                                                              LCD_ShowString(2,1,"                 ");
+ 102   7                                                              LCD_ShowString(1,1,"  Set  Success!  ");
+ 103   7                                                              Delay(50);
+ 104   7                                                              LCD_ShowString(1,1,"                 ");
+ 105   7                                                              LCD_ShowString(1,1,g_Messages[i]);
+ 106   7                                                              LCD_ShowString(2,1,g_Messages[i+1]);
+ 107   7                                                      }
+ 108   6                                              }                       
+ 109   5                                      }                       
+ 110   4                                      if(i==1)
+ 111   4                                      {
+ 112   5                                              LCD_ShowString(1,1,"                ");
+ 113   5                                              LCD_ShowString(2,1,"                ");
+ 114   5                                              LCD_ShowString(1,1,"Now Warning Lux ");
+ 115   5                                              LCD_ShowString(2,1,"-");
+ 116   5                                              LCD_ShowString(2,16,"+");
+C51 COMPILER V9.54   MENU                                                                  09/04/2025 18:00:50 PAGE 3   
+
+ 117   5                                              LCD_ShowNum(2,10,Warning_LHNum,3);
+ 118   5                                              LCD_ShowNum(2,5,Warning_LLNum,3);
+ 119   5                                              cycle=1;
+ 120   5                                              while(cycle)
+ 121   5                                              {
+ 122   6                                                      Key_Num=Key();
+ 123   6                                                      if(Key_Num==1)
+ 124   6                                                      {
+ 125   7                                                              Warning_LLNum--;
+ 126   7                                                              if(Warning_LLNum<10)Warning_LLNum=100;
+ 127   7                                                              if(Warning_LLNum>Warning_LHNum)Warning_LLNum=Warning_LHNum;
+ 128   7                                                              LCD_ShowNum(2,5,Warning_LLNum,3);
+ 129   7                                                      }                                       
+ 130   6                                                      if(Key_Num==2)
+ 131   6                                                      {
+ 132   7                                                              Warning_LHNum++;        
+ 133   7                                                              if(Warning_LHNum>300)Warning_LHNum=100;
+ 134   7                                                              if(Warning_LHNum<Warning_LLNum)Warning_LHNum=Warning_LLNum;
+ 135   7                                                              LCD_ShowNum(2,10,Warning_LHNum,3);
+ 136   7                                                      }
+ 137   6                                                      if(Key_Num==3)
+ 138   6                                                      {
+ 139   7                                                              cycle=0;
+ 140   7                                                              LCD_ShowString(1,1,"                 ");
+ 141   7                                                              LCD_ShowString(2,1,"                 ");
+ 142   7                                                              LCD_ShowString(1,1,"  Set  Success!  ");
+ 143   7                                                              Delay(50);
+ 144   7                                                              LCD_ShowString(1,1,"                 ");
+ 145   7                                                              LCD_ShowString(1,1,g_Messages[i]);
+ 146   7                                                              LCD_ShowString(2,1,g_Messages[i+1]);
+ 147   7                                                      }
+ 148   6                                              }                       
+ 149   5                                      }       
+ 150   4                                      if(i==2)
+ 151   4                                      {
+ 152   5                                              LCD_ShowString(1,1,"                ");
+ 153   5                                              LCD_ShowString(2,1,"                ");
+ 154   5                                              LCD_ShowString(1,1,"Now Motor Speed ");
+ 155   5                                              LCD_ShowString(2,1,"-");
+ 156   5                                              LCD_ShowString(2,16,"+");
+ 157   5                                              LCD_ShowNum(2,8,Compare,2);
+ 158   5                                              cycle=1;
+ 159   5                                              while(cycle)
+ 160   5                                              {
+ 161   6                                                      Key_Num=Key();
+ 162   6                                                      if(Key_Num==1)
+ 163   6                                                      {
+ 164   7                                                              Compare--;
+ 165   7                                                              LCD_ShowNum(2,8,Compare,2);
+ 166   7                                                              if(Compare<0)Compare=0;
+ 167   7                                                      }                                       
+ 168   6                                                      if(Key_Num==2)
+ 169   6                                                      {
+ 170   7                                                              Compare++;
+ 171   7                                                              LCD_ShowNum(2,8,Compare,2);
+ 172   7                                                              if(Compare>10)Compare=10;
+ 173   7                                                      }
+ 174   6                                                      if(Key_Num==3)
+ 175   6                                                      {
+ 176   7                                                              cycle=0;
+ 177   7                                                              LCD_ShowString(1,1,"                 ");
+ 178   7                                                              LCD_ShowString(2,1,"                 ");
+C51 COMPILER V9.54   MENU                                                                  09/04/2025 18:00:50 PAGE 4   
+
+ 179   7                                                              LCD_ShowString(1,1,"  Set  Success!  ");
+ 180   7                                                              Delay(50);
+ 181   7                                                              LCD_ShowString(1,1,"                 ");
+ 182   7                                                              LCD_ShowString(1,1,g_Messages[i]);
+ 183   7                                                              LCD_ShowString(2,1,g_Messages[i+1]);
+ 184   7                                                      }
+ 185   6                                              }                       
+ 186   5                                      }                               
+ 187   4                                      if(i==3)
+ 188   4                                      {
+ 189   5                                              LCD_ShowString(1,1,"                ");
+ 190   5                                              LCD_ShowString(2,1,"                ");
+ 191   5                                              LCD_ShowString(1,1,"Now  Motor  Mode");
+ 192   5                                              //LCD_ShowString(2,1,"Y");
+ 193   5                                              //LCD_ShowString(2,16,"N");
+ 194   5                                              //LCD_ShowNum(2,8,Warning_LNum,2);
+ 195   5                                              cycle=1;
+ 196   5                                              while(cycle)
+ 197   5                                              {
+ 198   6                                                      Key_Num=Key();
+ 199   6                                                      if(Key_Num==1)
+ 200   6                                                      {
+ 201   7                                                              LCD_ShowString(2,1,"Y");
+ 202   7                                                              Delay(1000);
+ 203   7                                                              LCD_ShowString(2,1," ");                                                        
+ 204   7                                                              Motor_Start=1;
+ 205   7                                                      }                                       
+ 206   6                                                      if(Key_Num==2)
+ 207   6                                                      {
+ 208   7                                                              LCD_ShowString(2,16,"N");
+ 209   7                                                              Delay(1000);
+ 210   7                                                              LCD_ShowString(2,16," ");       
+ 211   7                                                              Motor_Start=0;
+ 212   7                                                      }
+ 213   6                                                      if(Key_Num==3)
+ 214   6                                                      {
+ 215   7                                                              cycle=0;
+ 216   7                                                              LCD_ShowString(1,1,"                 ");
+ 217   7                                                              LCD_ShowString(2,1,"                 ");
+ 218   7                                                              LCD_ShowString(1,1,"  Set  Success!  ");
+ 219   7                                                              Delay(50);
+ 220   7                                                              LCD_ShowString(1,1,"                 ");
+ 221   7                                                              LCD_ShowString(1,1,g_Messages[i]);
+ 222   7                                                              LCD_ShowString(2,1,g_Messages[i+1]);
+ 223   7                                                      }
+ 224   6                                              }                                       
+ 225   5                                      }                               
+ 226   4                              }
+ 227   3                      }
+ 228   2                      Key_Num=Key(); 
+ 229   2              }
+ 230   1              LCD_ShowString(1,1,"                "); 
+ 231   1              LCD_ShowString(2,1,"                "); 
+ 232   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1530    ----
+   CONSTANT SIZE    =    182    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       1
+C51 COMPILER V9.54   MENU                                                                  09/04/2025 18:00:50 PAGE 5   
+
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
